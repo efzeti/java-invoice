@@ -1,17 +1,15 @@
 package pl.edu.agh.mwo.invoice;
 
-import java.math.BigDecimal;
-
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import pl.edu.agh.mwo.invoice.Invoice;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
 import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+
+import java.math.BigDecimal;
 
 public class InvoiceTest {
     private Invoice invoice;
@@ -23,9 +21,9 @@ public class InvoiceTest {
 
     @Test
     public void testEmptyInvoiceHasEmptySubtotal() {
-        Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getSubtotal()));
-    }
-
+        Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getSubtotal())); // matcher jest po to żeby 'zaokraglalo' do tylu miejsc po przecinku
+    }                                                                                        //  ile trzeba, a nie do ilu sie da bo na koncu czasem w doublach koncowki
+                                                                                             // sie nie zgadzaja
     @Test
     public void testEmptyInvoiceHasEmptyTaxAmount() {
         Assert.assertThat(BigDecimal.ZERO, Matchers.comparesEqualTo(invoice.getTax()));
