@@ -4,10 +4,7 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import pl.edu.agh.mwo.invoice.product.DairyProduct;
-import pl.edu.agh.mwo.invoice.product.OtherProduct;
-import pl.edu.agh.mwo.invoice.product.Product;
-import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+import pl.edu.agh.mwo.invoice.product.*;
 
 import java.math.BigDecimal;
 
@@ -102,4 +99,70 @@ public class InvoiceTest {
     public void testInvoiceWithNegativeQuantity() {
         invoice.addProduct(new DairyProduct("Zsiadle mleko", new BigDecimal("5.55")), -1);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvoiceWithNullName() {
+        invoice.addProduct(new DairyProduct(null, new BigDecimal("5.55")), 1);
+    }
+
+    @Test
+    public void testInvoiceHasNumber() {
+        int invoiceNumber = invoice.getNumber();
+        int invoiceNumber2 = new Invoice().getNumber();
+        Assert.assertTrue(invoiceNumber > 0);
+    }
+
+    @Test
+    public void testInvoiceHasNextNumber() {
+        int invoiceNumber = invoice.getNumber();
+        int invoiceNumber2 = new Invoice().getNumber();
+        Assert.assertNotEquals(invoiceNumber, invoiceNumber2);
+    }
+
+
+    @Test
+    public void testAddProduct() {
+        invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+        Assert.assertEquals(1, invoice.getItemsCount());
+    }
+
+    @Test
+    public void testAddProducts() {
+        invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+        invoice.addProduct(new TaxFreeProduct("Tablet", new BigDecimal("1678")), 3);
+        Assert.assertEquals(2, invoice.getItemsCount());
+    }
+
+    @Test
+    public void testAddProductsWithSameName() {
+        invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+        invoice.addProduct(new TaxFreeProduct("Tablet", new BigDecimal("1678")), 3);
+        invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+        invoice.addProduct(new TaxFreeProduct("Tablet", new BigDecimal("1678")), 3);
+        Assert.assertEquals(2, invoice.getItemsCount());
+    }
+
+
+    @Test
+    public void testGetTotalProducts() {
+        invoice.addProduct(new TaxFreeProduct("P1", new BigDecimal("1")), 1);
+        invoice.addProduct(new TaxFreeProduct("P2", new BigDecimal("2")), 2);
+        invoice.addProduct(new TaxFreeProduct("P3", new BigDecimal("3")), 3);
+        invoice.addProduct(new TaxFreeProduct("P4", new BigDecimal("4")), 4);
+        Assert.assertEquals(10, invoice.getTotalProducts());
+    }
+
+    @Test
+    public void printInvoice() {
+        invoice.printInvoice();
+    }
+
+    @Test
+    public void testInvoiceProperlyAddsExcise() {
+        
+        invoice.addProduct(new FuelCanister("95", new BigDecimal("0")), 1);
+        invoice.addProduct(new BottleOfWine("Mamrot", new BigDecimal("0")), 1);
+        Assert.assertEquals(new BigDecimal("11.12"), invoice.getTaxTotal());
+    }
+
 }
